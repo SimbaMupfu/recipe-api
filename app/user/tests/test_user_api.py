@@ -10,7 +10,7 @@ CREATE_USER_URL = reverse('user:create')
 
 
 def create_user(**param):
-    return get_user_model().objects.create_user(**params)
+    return get_user_model().objects.create_user(**param)
 
 
 class PublicUserApiTests(TestCase):
@@ -35,7 +35,11 @@ class PublicUserApiTests(TestCase):
 
     def test_user_exists(self):
         """Test creating a user that already exists"""
-        payload = {'email': 'test@test.com', 'password': '1234test'}
+        payload = {
+            'email': 'test@test.com',
+            'password': '1234test',
+            'name': 'Test Test'
+            }
         create_user(**payload)
 
         res = self.client.post(CREATE_USER_URL, payload)
@@ -43,11 +47,15 @@ class PublicUserApiTests(TestCase):
 
     def test_password_too_short(self):
         """Test that the password has more than 5 characters"""
-        payload = {'email': 'test@test.com', 'password': 'pw'}
+        payload = {
+            'email': 'test@test.com',
+            'password': 'pw',
+            'name': 'Test'
+            }
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         user_exists = get_user_model().objects.filter(
-            email = payload('email')
+            email=payload['email']
         ).exists()
         self.assertFalse(user_exists)
