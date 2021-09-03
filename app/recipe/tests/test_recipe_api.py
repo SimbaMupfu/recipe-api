@@ -30,12 +30,13 @@ class PublicRecipeApiTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-    
+
     def test_auth_required(self):
         """Test that authentication is required"""
         res = self.client.get(RECIPES_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class PrivateRecipeApiTests(TestCase):
     """Test authenticated reipe API access"""
@@ -55,7 +56,7 @@ class PrivateRecipeApiTests(TestCase):
 
         res = self.client.get(RECIPES_URL)
 
-        recipes = Recipes.objects.all().order_by('-id')
+        recipes = Recipe.objects.all().order_by('-id')
         serializer = RecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
